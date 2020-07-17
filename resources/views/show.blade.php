@@ -1,5 +1,5 @@
 @extends('docs::app')
 
 @section('content')
-    Hello World!
+{!! (new \Docs\Factory)->make(App\Models\Test::class, Docs\Parser\ModelParser::class) !!}
 @endsection

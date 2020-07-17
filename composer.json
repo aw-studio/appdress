@@ -7,7 +7,9 @@
 			"email": "lennart.carbe@gmail.com"
 		}
 	],
-	"require": {},
+	"require": {
+		"phpdocumentor/reflection-docblock": "^5.1"
+	},
 	"autoload": {
 		"psr-4": {
 			"Docs\\": "src/"
