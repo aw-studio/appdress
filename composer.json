@@ -1,0 +1,23 @@
+{
+	"name": "aw-studio/project-docs",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "cbl",
+			"email": "lennart.carbe@gmail.com"
+		}
+	],
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"Docs\\": "src/"
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Docs\\ServiceProvider"
+			]
+		}
+	}
+}
