@@ -8,6 +8,7 @@
 		}
 	],
 	"require": {
+		"doctrine/dbal": "^2.10",
 		"phpdocumentor/reflection-docblock": "^5.1"
 	},
 	"autoload": {

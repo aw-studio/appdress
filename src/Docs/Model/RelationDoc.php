@@ -5,7 +5,7 @@ namespace Docs\Docs\Model;
 use Docs\Docs\MethodDoc;
 use Docs\Markdown\Model\Relationship;
 
-class RelationshipDoc extends MethodDoc
+class RelationDoc extends MethodDoc
 {
     public function addDescription(): array
     {

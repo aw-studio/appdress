@@ -8,7 +8,7 @@ if (! function_exists('instance_of')) {
      * @param  string $match
      * @return bool
      */
-    function instance_of($class, $match)
+    function instance_of(string $class, string $match)
     {
         // Match interfaces.
         $implements = (new ReflectionClass($class))->getInterfaceNames();

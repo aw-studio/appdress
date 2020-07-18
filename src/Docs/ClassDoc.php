@@ -13,17 +13,19 @@ class ClassDoc extends BaseDoc
         parent::__construct($parser, $class, $reflection);
     }
 
-    public function getChildren(): array
+    public function getChildren()
     {
-        $methods = [];
+        return $this->getMethods()->map(function ($method) {
+            return $this->makeMethodBlock($method);
+        });
+    }
 
-        foreach ($this->reflection->getMethods() as $method) {
-            if ($this->shouldDocumentMethod($method)) {
-                $methods[] = $this->makeMethodBlock($method);
-            }
-        }
-
-        return $methods;
+    public function getMethods()
+    {
+        return collect($this->reflection->getMethods())
+            ->filter(function ($method) {
+                return $this->shouldDocumentMethod($method);
+            });
     }
 
     protected function shouldDocumentMethod(ReflectionMethod $method)

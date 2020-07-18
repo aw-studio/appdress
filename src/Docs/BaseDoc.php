@@ -47,11 +47,11 @@ class BaseDoc implements Doc
     {
         $desc = $this->prependDescription();
 
-        if ($summary = $this->getDocBlock()->getSummary()) {
+        if ($this->getDocBlock() && $summary = $this->getDocBlock()->getSummary()) {
             $desc[] = $summary;
         }
 
-        if ($description = $this->getDocBlock()->getDescription()) {
+        if ($this->getDocBlock() && $description = $this->getDocBlock()->getDescription()) {
             $desc[] = $description->getBodyTemplate();
         }
 
@@ -70,7 +70,7 @@ class BaseDoc implements Doc
         return [];
     }
 
-    public function getChildren(): array
+    public function getChildren()
     {
         return [];
     }

@@ -4,13 +4,16 @@ namespace Docs\Parser\Concerns;
 
 use Docs\Contracts\Doc;
 use Docs\Contracts\MarkdownItem;
-use Docs\Markdown\Title;
+use Docs\Support\Markdown;
 
 trait ParsesMarkdown
 {
     public function parseMarkdownTitle(Doc $doc)
     {
-        return Title::markdown($doc->getTitle(), $doc->getDepth());
+        return Markdown::title(
+            $doc->getTitle(),
+            $doc->getDepth()
+        )->toMarkdown();
     }
 
     public function parseMarkdownDescription(Doc $doc)

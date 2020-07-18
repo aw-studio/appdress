@@ -8,7 +8,7 @@ interface Doc
 
     public function getDescription();
 
-    public function getChildren(): array;
+    public function getChildren();
 
     public function getDepth(): int;
 }
