@@ -2,6 +2,8 @@
 
 namespace Docs;
 
+use Docs\Docs\Model\ModelDoc;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
 class ServiceProvider extends LaravelServiceProvider
@@ -15,5 +17,9 @@ class ServiceProvider extends LaravelServiceProvider
         $this->app->singleton('docs.factory', \Docs\Factory::class);
 
         $this->app->bind(\Docs\Contracts\Parser::class, 'docs.parser');
+
+        $this->app->afterResolving('docs.factory', function ($factory) {
+            $factory->bind(Model::class, ModelDoc::class);
+        });
     }
 }

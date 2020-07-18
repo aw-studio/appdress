@@ -1,11 +1,11 @@
 <?php
 
-namespace Docs\Blocks\Model;
+namespace Docs\Docs\Model;
 
-use Docs\Blocks\MethodBlock;
+use Docs\Docs\MethodDoc;
 use Docs\Markdown\Model\Relationship;
 
-class RelationshipBlock extends MethodBlock
+class RelationshipDoc extends MethodDoc
 {
     public function addDescription(): array
     {

@@ -2,7 +2,7 @@
 
 namespace Docs\Parser;
 
-use Docs\Contracts\Block;
+use Docs\Contracts\Doc;
 use Docs\Contracts\Parser as ParserContract;
 use ParsedownExtra;
 
@@ -17,23 +17,23 @@ class Parser implements ParserContract
         $this->parsedown = new ParsedownExtra;
     }
 
-    public function toMarkdown(Block $block)
+    public function toMarkdown(Doc $doc)
     {
         $lines = [];
 
-        $lines[] = $this->parseMarkdownTitle($block);
+        $lines[] = $this->parseMarkdownTitle($doc);
 
-        $lines = array_merge($lines, $this->parseMarkdownDescription($block));
+        $lines = array_merge($lines, $this->parseMarkdownDescription($doc));
 
-        $lines = array_merge($lines, $this->parseMarkdownChildren($block));
+        $lines = array_merge($lines, $this->parseMarkdownChildren($doc));
 
         return implode("\n\n", $lines);
     }
 
-    public function toHtml(Block $block)
+    public function toHtml(Doc $doc)
     {
         return $this->parsedown->text(
-            $this->toMarkdown($block)
+            $this->toMarkdown($doc)
         );
     }
 }

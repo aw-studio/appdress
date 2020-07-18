@@ -1,11 +1,11 @@
 <?php
 
-namespace Docs\Blocks\Model;
+namespace Docs\Docs\Model;
 
-use Docs\Blocks\ClassBlock;
+use Docs\Docs\ClassDoc;
 use ReflectionMethod;
 
-class RelationsBlock extends ClassBlock
+class RelationshipsDoc extends ClassDoc
 {
     public function getTitle()
     {
@@ -26,6 +26,6 @@ class RelationsBlock extends ClassBlock
 
     protected function makeMethodBlock(ReflectionMethod $method)
     {
-        return $this->makeBlock(RelationshipBlock::class, $method);
+        return $this->makeBlock(RelationshipDoc::class, $method);
     }
 }

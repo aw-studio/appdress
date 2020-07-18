@@ -13,7 +13,10 @@
 	"autoload": {
 		"psr-4": {
 			"Docs\\": "src/"
-		}
+		},
+		"files": [
+			"src/Support/helpers.php"
+		]
 	},
 	"extra": {
 		"laravel": {

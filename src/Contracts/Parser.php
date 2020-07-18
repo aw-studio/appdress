@@ -4,7 +4,7 @@ namespace Docs\Contracts;
 
 interface Parser
 {
-    public function toMarkdown(Block $block);
+    public function toMarkdown(Doc $doc);
 
-    public function toHtml(Block $block);
+    public function toHtml(Doc $doc);
 }

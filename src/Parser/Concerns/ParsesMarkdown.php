@@ -2,22 +2,22 @@
 
 namespace Docs\Parser\Concerns;
 
-use Docs\Contracts\Block;
+use Docs\Contracts\Doc;
 use Docs\Contracts\MarkdownItem;
 use Docs\Markdown\Title;
 
 trait ParsesMarkdown
 {
-    public function parseMarkdownTitle(Block $block)
+    public function parseMarkdownTitle(Doc $doc)
     {
-        return Title::markdown($block->getTitle(), $block->getDepth());
+        return Title::markdown($doc->getTitle(), $doc->getDepth());
     }
 
-    public function parseMarkdownDescription(Block $block)
+    public function parseMarkdownDescription(Doc $doc)
     {
         $lines = [];
 
-        foreach ($block->getDescription() as $description) {
+        foreach ($doc->getDescription() as $description) {
             if ($description instanceof MarkdownItem) {
                 $lines[] = $description->toMarkdown();
             } else {
@@ -28,11 +28,11 @@ trait ParsesMarkdown
         return $lines;
     }
 
-    public function parseMarkdownChildren(Block $block)
+    public function parseMarkdownChildren(Doc $doc)
     {
         $children = [];
 
-        foreach ($block->getChildren() as $child) {
+        foreach ($doc->getChildren() as $child) {
             $children[] = $child->toMarkdown();
         }
 

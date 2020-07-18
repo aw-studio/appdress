@@ -1,22 +1,20 @@
 <?php
 
-namespace Docs\Blocks;
+namespace Docs\Docs;
 
-use Docs\Contracts\Block;
+use Docs\Contracts\Doc;
 use Docs\Contracts\Parser;
 use phpDocumentor\Reflection\DocBlockFactory;
 
-class BaseBlock implements Block
+class BaseDoc implements Doc
 {
-    use Concerns\ManagesDoc;
-
     protected $parser;
 
     protected $class;
 
     protected $reflection;
 
-    protected $doc;
+    protected $docBlock;
 
     protected $depth = 1;
 
@@ -49,11 +47,11 @@ class BaseBlock implements Block
     {
         $desc = $this->prependDescription();
 
-        if ($summary = $this->getDoc()->getSummary()) {
+        if ($summary = $this->getDocBlock()->getSummary()) {
             $desc[] = $summary;
         }
 
-        if ($description = $this->getDoc()->getDescription()) {
+        if ($description = $this->getDocBlock()->getDescription()) {
             $desc[] = $description->getBodyTemplate();
         }
 
@@ -88,6 +86,19 @@ class BaseBlock implements Block
         $block->setDepth($this->depth + 1);
 
         return $block;
+    }
+
+    public function getDocBlock()
+    {
+        if ($this->docBlock) {
+            return $this->docBlock;
+        }
+
+        if (! $comment = $this->reflection->getDocComment()) {
+            return;
+        }
+
+        return $this->docBlock = $this->factory->create($comment);
     }
 
     public function toMarkdown()

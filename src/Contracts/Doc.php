@@ -2,7 +2,7 @@
 
 namespace Docs\Contracts;
 
-interface Block
+interface Doc
 {
     public function getTitle();
 

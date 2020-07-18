@@ -1,12 +1,12 @@
 <?php
 
-namespace Docs\Blocks;
+namespace Docs\Docs;
 
 use Docs\Contracts\Parser;
 use ReflectionClass;
 use ReflectionMethod;
 
-class ClassBlock extends BaseBlock
+class ClassDoc extends BaseDoc
 {
     public function __construct(Parser $parser, string $class, ReflectionClass $reflection)
     {

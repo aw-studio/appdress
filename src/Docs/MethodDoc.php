@@ -1,11 +1,11 @@
 <?php
 
-namespace Docs\Blocks;
+namespace Docs\Docs;
 
 use Docs\Contracts\Parser;
 use ReflectionMethod;
 
-class MethodBlock extends BaseBlock
+class MethodDoc extends BaseDoc
 {
     public function __construct(Parser $parser, string $class, ReflectionMethod $reflection)
     {

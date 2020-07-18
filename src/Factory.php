@@ -2,22 +2,30 @@
 
 namespace Docs;
 
-use Docs\Blocks\ClassBlock;
-use Docs\Blocks\Model\ModelBlock;
 use Docs\Contracts\Block;
+use Docs\Contracts\Doc;
 use ReflectionClass;
 
 class Factory
 {
+    protected $bindings = [];
+
+    public function bind($dependency, $doc)
+    {
+        $this->bindings[$dependency] = $doc;
+
+        return $this;
+    }
+
     /**
      * Creates new Block object from class.
      *
-     * @param  string     $path
-     * @return ClassBlock
+     * @param  string   $path
+     * @return ClassDoc
      */
-    public function make($class): Block
+    public function make($class): Doc
     {
-        $block = $this->resolveBlock($class);
+        $block = $this->resolveClassDoc($class);
 
         $reflection = new ReflectionClass($class);
 
@@ -32,8 +40,14 @@ class Factory
         ]);
     }
 
-    public function resolveBlock($class)
+    public function resolveClassDoc($class)
     {
-        return ModelBlock::class;
+        foreach ($this->bindings as $dependency => $binding) {
+            if (instance_of($class, $dependency)) {
+                return $binding;
+            }
+        }
+
+        return ClassDoc::class;
     }
 }

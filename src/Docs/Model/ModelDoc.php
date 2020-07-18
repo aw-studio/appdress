@@ -1,10 +1,10 @@
 <?php
 
-namespace Docs\Blocks\Model;
+namespace Docs\Docs\Model;
 
-use Docs\Blocks\ClassBlock;
+use Docs\Docs\ClassDoc;
 
-class ModelBlock extends ClassBlock
+class ModelDoc extends ClassDoc
 {
     public function prependDescription(): array
     {
@@ -16,7 +16,7 @@ class ModelBlock extends ClassBlock
     public function getChildren(): array
     {
         return [
-            $this->makeBlock(RelationsBlock::class),
+            $this->makeBlock(RelationshipsDoc::class),
         ];
     }
 }
