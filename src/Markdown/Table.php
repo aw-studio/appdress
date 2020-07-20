@@ -28,7 +28,9 @@ class Table extends Item
 
     public function renderRow($columns)
     {
-        return '| '.implode(' | ', $columns).' |';
+        return '| '.collect($columns)->map(function ($column) {
+            return str_replace("\n", '<br>', $column);
+        })->implode(' | ').' |';
     }
 
     public function renderSplitter()

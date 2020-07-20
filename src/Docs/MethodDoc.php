@@ -5,7 +5,7 @@ namespace Docs\Docs;
 use Docs\Contracts\Parser;
 use ReflectionMethod;
 
-class MethodDoc extends BaseDoc
+class MethodDoc extends ReflectionDoc
 {
     public function __construct(Parser $parser, string $class, ReflectionMethod $reflection)
     {

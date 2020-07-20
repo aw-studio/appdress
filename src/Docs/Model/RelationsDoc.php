@@ -3,9 +3,9 @@
 namespace Docs\Docs\Model;
 
 use Docs\Docs\ClassDoc;
+use Docs\Markdown\Model\Relationship;
 use Docs\Support\Markdown;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Str;
 use ReflectionMethod;
 
 class RelationsDoc extends ClassDoc
@@ -30,9 +30,24 @@ class RelationsDoc extends ClassDoc
 
     public function relationsTable()
     {
-        return Markdown::list($this->getMethods()->map(function ($method) {
-            return Markdown::link($method->name, '#'.Str::slug($method->name));
-        }));
+        $rows = $this->getMethods()->map(function ($method) {
+            $docBlock = $this->factory->create($method->getDocComment());
+
+            return [
+                $method->name,
+                new Relationship($method->getReturnType()->getName()),
+                $docBlock ? $docBlock->getSummary() : null,
+            ];
+        })->toArray();
+
+        return Markdown::table([
+            'column', 'type', 'description',
+        ], $rows);
+    }
+
+    public function getChildren()
+    {
+        return [];
     }
 
     protected function shouldDocumentMethod(ReflectionMethod $method)

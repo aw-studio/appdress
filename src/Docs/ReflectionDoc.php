@@ -4,9 +4,10 @@ namespace Docs\Docs;
 
 use Docs\Contracts\Doc;
 use Docs\Contracts\Parser;
+use Docs\Support\Markdown;
 use phpDocumentor\Reflection\DocBlockFactory;
 
-class BaseDoc implements Doc
+class ReflectionDoc implements Doc
 {
     protected $parser;
 
@@ -24,6 +25,11 @@ class BaseDoc implements Doc
         $this->class = $class;
         $this->reflection = $reflection;
         $this->factory = DocBlockFactory::createInstance();
+    }
+
+    public function subTitle($title)
+    {
+        return Markdown::title($title, $this->depth + 1);
     }
 
     public function setDepth(int $depth)
@@ -88,13 +94,17 @@ class BaseDoc implements Doc
         return $block;
     }
 
-    public function getDocBlock()
+    public function getDocBlock($reflection = null)
     {
+        if (! $reflection) {
+            $reflection = $this->reflection;
+        }
+
         if ($this->docBlock) {
             return $this->docBlock;
         }
 
-        if (! $comment = $this->reflection->getDocComment()) {
+        if (! $comment = $reflection->getDocComment()) {
             return;
         }
 

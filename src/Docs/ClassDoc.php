@@ -6,7 +6,7 @@ use Docs\Contracts\Parser;
 use ReflectionClass;
 use ReflectionMethod;
 
-class ClassDoc extends BaseDoc
+class ClassDoc extends ReflectionDoc
 {
     public function __construct(Parser $parser, string $class, ReflectionClass $reflection)
     {
@@ -35,6 +35,6 @@ class ClassDoc extends BaseDoc
 
     protected function makeMethodBlock(ReflectionMethod $method)
     {
-        return $this->makeBlock(MethodBlock::class, $method);
+        return $this->makeBlock(MethodDoc::class, $method);
     }
 }

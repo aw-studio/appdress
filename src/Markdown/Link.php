@@ -22,6 +22,23 @@ class Link extends Item
 
     public function toMarkdown()
     {
-        return "[$this->title]($this->href)";
+        if (! $this->isExternal()) {
+            return "[$this->title]($this->href)";
+        }
+
+        return '<a href="'.$this->href."\" target=\"_blank\">{$this->title}</a>";
+    }
+
+    protected function isExternal()
+    {
+        $components = parse_url($this->href);
+
+        return ! empty($components['host'])
+            && strcasecmp($components['host'], $this->getAppHost()); // empty host will indicate url like '/relative.php'
+    }
+
+    public function getAppHost()
+    {
+        return parse_url(config('app.url'))['host'] ?? null;
     }
 }

@@ -10,6 +10,10 @@ if (! function_exists('instance_of')) {
      */
     function instance_of(string $class, string $match)
     {
+        if ($class === $match) {
+            return true;
+        }
+
         // Match interfaces.
         $implements = (new ReflectionClass($class))->getInterfaceNames();
         if (in_array($match, $implements)) {

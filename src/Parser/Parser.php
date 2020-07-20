@@ -19,15 +19,14 @@ class Parser implements ParserContract
 
     public function toMarkdown(Doc $doc)
     {
-        $lines = [];
+        $lines = collect([]);
 
         $lines[] = $this->parseMarkdownTitle($doc);
+        $lines = $lines->merge(
+            $this->parseMarkdownDescription($doc)
+        );
 
-        $lines = array_merge($lines, $this->parseMarkdownDescription($doc));
-
-        $lines = array_merge($lines, $this->parseMarkdownChildren($doc));
-
-        return implode("\n\n", $lines);
+        return $lines->flatten()->implode("\n\n");
     }
 
     public function toHtml(Doc $doc)
