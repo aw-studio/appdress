@@ -2,6 +2,8 @@
 
 namespace Docs;
 
+use Closure;
+use Docs\Docs\ClassDoc;
 use Docs\Docs\ReflectionDoc;
 use ReflectionClass;
 use Reflector;
@@ -69,6 +71,9 @@ class Factory
     public function resolveClassDoc($class)
     {
         foreach ($this->bindings as $dependency => $binding) {
+            if ($binding instanceof Closure && $binding($class)) {
+                return $dependency;
+            }
             if (instance_of($class, $dependency)) {
                 return $binding;
             }

@@ -7,6 +7,7 @@ use Docs\Contracts\Parser;
 use Illuminate\Support\Collection;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlockFactory;
+use ReflectionClass;
 use Reflector;
 
 abstract class ReflectionDoc extends BaseDoc
@@ -59,19 +60,50 @@ abstract class ReflectionDoc extends BaseDoc
      */
     public function getSummary(Reflector $reflector = null): Collection
     {
+        if (! $reflector) {
+            $reflector = $this->reflector;
+        }
+
         if (! $docBlock = $this->getDocBlock($reflector)) {
-            return collect([]);
+            return $this->getInvokeSummary($reflector);
         }
 
         $summary = collect([$docBlock->getSummary()]);
 
         if (! $description = $docBlock->getDescription()) {
-            return $summary;
+            return $summary->merge(
+                $this->getInvokeSummary($reflector)
+            );
         }
 
         $summary[] = $description->getBodyTemplate();
 
-        return $summary;
+        return $summary->merge(
+            $this->getInvokeSummary($reflector)
+        );
+    }
+
+    /**
+     * Get invoke summary.
+     *
+     * @param  Reflector  $reflector
+     * @return Collection
+     */
+    public function getInvokeSummary(Reflector $reflector)
+    {
+        if (! $reflector instanceof ReflectionClass) {
+            return collect([]);
+        }
+
+        $method = collect($reflector->getMethods())->first(function ($method) {
+            return $method->name == '__invoke';
+        });
+
+        if (! $method) {
+            return collect([]);
+        }
+
+        return $this->getSummary($method);
     }
 
     /**
