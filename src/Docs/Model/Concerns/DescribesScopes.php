@@ -35,14 +35,9 @@ trait DescribesScopes
     public function scopesTable()
     {
         $rows = $this->getScopeMethods()->map(function ($method) {
-            $docBlock = null;
-            if ($comment = $method->getDocComment()) {
-                $docBlock = $this->factory->create($comment);
-            }
-
             return [
-                lcfirst(Str::replaceFirst('scope', '', $method->name)),
-                $docBlock ? $docBlock->getSummary() : null,
+                Markdown::code($this->getScopeName($method)),
+                $this->getSummary($method)->implode("\n"),
             ];
         })->toArray();
 
@@ -72,5 +67,16 @@ trait DescribesScopes
     public function isScopeMethod(ReflectionMethod $method)
     {
         return Str::startsWith($method->name, 'scope');
+    }
+
+    /**
+     * Get scope name from reflection method.
+     *
+     * @param  ReflectionMethod $method
+     * @return string
+     */
+    public function getScopeName(ReflectionMethod $method)
+    {
+        return lcfirst(Str::replaceFirst('scope', '', $method->name));
     }
 }

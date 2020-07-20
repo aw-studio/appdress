@@ -37,7 +37,7 @@ trait DescribeRelations
     {
         $rows = $this->getRelationsMethods()->map(function ($method) {
             return [
-                $method->name,
+                Markdown::code($method->name),
                 new Relationship($method->getReturnType()->getName()),
                 $this->getSummary($method)->implode("\n"),
             ];

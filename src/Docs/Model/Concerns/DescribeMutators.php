@@ -36,7 +36,7 @@ trait DescribeMutators
     {
         $rows = $this->getMutatorsMethods()->map(function ($method) {
             return [
-                '`'.$this->getAccessorsAttribute($method).'`',
+                Markdown::code($this->getMutatorAttribute($method)),
                 $this->getSummary($method)->implode("\n"),
             ];
         })->toArray();
@@ -80,7 +80,7 @@ trait DescribeMutators
      * @param  ReflectionMethod $method
      * @return string
      */
-    protected function getMutatorsAttribute(ReflectionMethod $method)
+    protected function getMutatorAttribute(ReflectionMethod $method)
     {
         return Str::snake(
             Str::replaceFirst('set', '', Str::replaceLast('Attribute', '', $method->name)),

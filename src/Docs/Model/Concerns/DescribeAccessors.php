@@ -36,7 +36,7 @@ trait DescribeAccessors
     {
         $rows = $this->getAccessorMethods()->map(function ($method) {
             return [
-                '`'.$this->getAccessorsAttribute($method).'`',
+                Markdown::code($this->getAccessorAttribute($method)),
                 $this->getSummary($method)->implode("\n"),
             ];
         })->toArray();
@@ -77,7 +77,7 @@ trait DescribeAccessors
      * @param  ReflectionMethod $method
      * @return string
      */
-    protected function getAccessorsAttribute(ReflectionMethod $method)
+    protected function getAccessorAttribute(ReflectionMethod $method)
     {
         return Str::snake(
             Str::replaceFirst('get', '', Str::replaceLast('Attribute', '', $method->name)),

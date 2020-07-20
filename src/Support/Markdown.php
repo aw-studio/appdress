@@ -2,6 +2,7 @@
 
 namespace Docs\Support;
 
+use Docs\Markdown\Code;
 use Docs\Markdown\Link;
 use Docs\Markdown\MdList;
 use Docs\Markdown\Table;
@@ -54,5 +55,17 @@ class Markdown
     public static function link($title, $href = null)
     {
         return new Link($title, $href);
+    }
+
+    /**
+     * Create markdown code.
+     *
+     * @param  string      $code
+     * @param  string|null $lang
+     * @return Code
+     */
+    public static function code($code, $lang = null)
+    {
+        return new Code($code, $lang);
     }
 }

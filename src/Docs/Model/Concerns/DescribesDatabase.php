@@ -43,8 +43,8 @@ trait DescribesDatabase
 
         foreach ($columns as $column) {
             $rows[] = [
-                $column,
-                '`'.$schema->getColumnType($this->getTable(), $column).'`',
+                Markdown::code($column),
+                Markdown::code($schema->getColumnType($this->getTable(), $column)),
                 $casts[$column] ?? null,
                 $this->describeColumn($column),
             ];
