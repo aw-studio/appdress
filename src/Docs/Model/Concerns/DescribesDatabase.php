@@ -33,7 +33,9 @@ trait DescribesDatabase
 
         $schema = Schema::connection('docs_sqlite');
 
-        $columns = $schema->getColumnListing($this->getTable());
+        $columns = collect($schema->getColumnListing($this->getTable()))->mapWithKeys(function ($column) use ($schema) {
+            return [$column => $schema->getColumnType($this->getTable(), $column)];
+        })->sortDesc();
 
         if (empty($columns)) {
             return;
@@ -41,10 +43,10 @@ trait DescribesDatabase
 
         $casts = $this->getCasts();
 
-        foreach ($columns as $column) {
+        foreach ($columns as $column => $type) {
             $rows[] = [
                 Markdown::code($column),
-                Markdown::code($schema->getColumnType($this->getTable(), $column)),
+                Markdown::code($type),
                 $casts[$column] ?? null,
                 $this->describeColumn($column),
             ];
