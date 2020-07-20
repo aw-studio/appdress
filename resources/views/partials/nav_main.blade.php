@@ -1,25 +1,7 @@
 <nav>
-    <ul>
-        <li class="active"><a href="">Lorem ipsum dolor</a>
-            <ul>
-                <li><a href="">Lorem ipsum dolor</a></li>
-                <li><a href="">Lorem ipsum dolor</a></li>
-                <li><a href="">Lorem ipsum dolor</a></li>
-                <li class="active"><a href="">Lorem ipsum dolor</a>
-                    <ul>
-                        <li><a href="">Lorem ipsum dolor</a></li>
-                        <li><a href="">Lorem ipsum dolor</a></li>
-                        <li class="active"><a href="">Lorem ipsum dolor</a></li>
-                        <li><a href="">Lorem ipsum dolor</a></li>
-                        <li><a href="">Lorem ipsum dolor</a></li>
-                    </ul>
-                </li>
-                <li><a href="">Lorem ipsum dolor</a></li>
-            </ul>
-        </li>
-        <li><a href="">Lorem ipsum dolor</a></li>
-        <li><a href="">Lorem ipsum dolor</a></li>
-        <li><a href="">Lorem ipsum dolor</a></li>
-        <li><a href="">Lorem ipsum dolor</a></li>
-    </ul>
+   
+    @include('docs::partials.nav_main_items', ['items' => app('docs.nav')->getSections()])
+       
+    
+    
 </nav>

@@ -9,7 +9,8 @@
 	],
 	"require": {
 		"doctrine/dbal": "^2.10",
-		"phpdocumentor/reflection-docblock": "^5.1"
+		"phpdocumentor/reflection-docblock": "^5.1",
+		"symfony/class-loader": "^3.4"
 	},
 	"autoload": {
 		"psr-4": {

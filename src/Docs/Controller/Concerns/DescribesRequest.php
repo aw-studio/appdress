@@ -23,6 +23,11 @@ trait DescribesRequest
         ];
     }
 
+    /**
+     * Describe rules.
+     *
+     * @return array|null
+     */
     public function describeRules()
     {
         if (! $method = $this->reflectRules()) {

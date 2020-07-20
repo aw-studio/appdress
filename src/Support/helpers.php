@@ -14,6 +14,10 @@ if (! function_exists('instance_of')) {
             return true;
         }
 
+        if (! class_exists($class) || ! class_exists($match)) {
+            return false;
+        }
+
         // Match interfaces.
         $implements = (new ReflectionClass($class))->getInterfaceNames();
         if (in_array($match, $implements)) {
