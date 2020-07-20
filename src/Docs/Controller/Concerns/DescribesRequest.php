@@ -78,9 +78,7 @@ trait DescribesRequest
             ...ValidationRuleParser::parse($rule)
         );
 
-        $validator->validate();
-
-        return dd($validator->getMessages());
+        return collect($validator->messages()->get($attribute))->first();
     }
 
     /**

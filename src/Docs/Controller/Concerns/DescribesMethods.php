@@ -26,6 +26,9 @@ trait DescribesMethods
 
         return [
             $this->subTitle('Methods'),
+            $methods->map(function ($method) {
+                return $this->subDoc(ControllerMethodDoc::class, $method);
+            }),
         ];
     }
 
