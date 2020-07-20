@@ -11,14 +11,20 @@
 </head>
 <body>
 
-    <container>
-        <nav>
+    <div id="app" class="flex">
+        <aside class="p-8">
+            <div class="sticky top-0">
+                @include('docs::partials.header')
+                @include('docs::partials.nav_main')
+            </div>
+        </aside>
+        <main class="pt-6 pb-40">
+            <section id="docs">
+                    @yield('content')
+            </section>
+        </main>
 
-        </nav>
-        <section id="docs">
-            @yield('content')
-        </section>
-    </container>
+    </div>
     
 </body>
 </html>
