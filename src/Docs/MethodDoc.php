@@ -3,6 +3,7 @@
 namespace Docs\Docs;
 
 use Docs\Contracts\Parser;
+use Illuminate\Support\Collection;
 use ReflectionMethod;
 
 class MethodDoc extends ReflectionDoc
@@ -47,5 +48,15 @@ class MethodDoc extends ReflectionDoc
         return [
             $this->getSummary(),
         ];
+    }
+
+    /**
+     * Get method parameters.
+     *
+     * @return Collection
+     */
+    public function getParameters()
+    {
+        return collect($this->reflector->getParameters());
     }
 }

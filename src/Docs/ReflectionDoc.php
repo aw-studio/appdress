@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlockFactory;
 use ReflectionClass;
+use ReflectionParameter;
 use Reflector;
 
 abstract class ReflectionDoc extends BaseDoc
@@ -143,5 +144,51 @@ abstract class ReflectionDoc extends BaseDoc
         }
 
         return $this->docBlock = $this->factory->create($comment);
+    }
+
+    /**
+     * Create new reflector for class.
+     *
+     * @param  ReflectionParameter  $reflector
+     * @return ReflectionClass|null
+     */
+    public function reflectParameterClass(ReflectionParameter $reflector)
+    {
+        if (! $name = $this->paramTypeName($reflector)) {
+            return;
+        }
+
+        return new ReflectionClass($name);
+    }
+
+    /**
+     * Find method reflector by name.
+     *
+     * @param  ReflectionClass       $reflector
+     * @param  string                $method
+     * @return ReflectionMethod|null
+     */
+    public function reflectClassMethod(ReflectionClass $reflector, $method)
+    {
+        foreach ($reflector->getMethods() as $reflectionMethod) {
+            if ($reflectionMethod->name == $method) {
+                return $reflectionMethod;
+            }
+        }
+    }
+
+    /**
+     * Get type name from parameter reflection.
+     *
+     * @param  ReflectionParameter $reflector
+     * @return string|null
+     */
+    public function paramTypeName(ReflectionParameter $reflector)
+    {
+        if (! $type = $reflector->getType()) {
+            return;
+        }
+
+        return $type->getName();
     }
 }

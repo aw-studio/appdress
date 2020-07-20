@@ -59,7 +59,7 @@ class Parser implements ParserContract
     public function toHtml(Doc $doc)
     {
         $html = $this->parsedown->text(
-            $this->toMarkdown($doc)
+           $this->toMarkdown($doc)
         );
 
         return "<div class=\"md\">{$html}</div>";

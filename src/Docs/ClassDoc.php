@@ -5,6 +5,7 @@ namespace Docs\Docs;
 use Docs\Contracts\Parser;
 use Illuminate\Support\Collection;
 use ReflectionClass;
+use ReflectionMethod;
 
 class ClassDoc extends ReflectionDoc
 {
@@ -64,15 +65,52 @@ class ClassDoc extends ReflectionDoc
     }
 
     /**
+     * Get own public methods.
+     *
+     * @return Collection
+     */
+    public function getPublicMethods()
+    {
+        return $this->publicMethods(
+            $this->getMethods()
+        );
+    }
+
+    /**
+     * Filter public methods.
+     *
+     * @param  Collection $methods
+     * @return Collection
+     */
+    protected function publicMethods(Collection $methods)
+    {
+        return $methods->filter(function (ReflectionMethod $method) {
+            return $method->getModifiers() === ReflectionMethod::IS_PUBLIC;
+        });
+    }
+
+    /**
      * Get own class methods.
      *
      * @return Collection
      */
     public function getOwnMethods(): Collection
     {
-        return $this->getMethods()->filter(function ($method) {
+        return $this->getMethods()->filter(function (ReflectionMethod $method) {
             return $method->class === $this->class;
         });
+    }
+
+    /**
+     * Get own public methods.
+     *
+     * @return Collection
+     */
+    public function getOwnPublicMethods()
+    {
+        return $this->publicMethods(
+            $this->getOwnMethods()
+        );
     }
 
     /**

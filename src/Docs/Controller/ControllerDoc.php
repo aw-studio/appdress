@@ -6,15 +6,16 @@ use Docs\Docs\ClassDoc;
 
 class ControllerDoc extends ClassDoc
 {
-    public function title()
-    {
-        return class_basename($this->class);
-    }
+    use Concerns\ManagesRoutes,
+        Concerns\DescribesMethods;
 
     public function describe()
     {
         return [
             $this->getSummary(),
+            $this->describeMethods(
+                $this->getOwnPublicMethods()
+            ),
         ];
     }
 }
