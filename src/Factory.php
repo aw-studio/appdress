@@ -2,14 +2,26 @@
 
 namespace Docs;
 
-use Docs\Contracts\Block;
-use Docs\Contracts\Doc;
+use Docs\Docs\ReflectionDoc;
 use ReflectionClass;
+use Reflector;
 
 class Factory
 {
+    /**
+     * Bindings.
+     *
+     * @var array
+     */
     protected $bindings = [];
 
+    /**
+     * Bind dependency.
+     *
+     * @param  string $dependency
+     * @param  string $doc
+     * @return $this
+     */
     public function bind($dependency, $doc)
     {
         $this->bindings[$dependency] = $doc;
@@ -18,28 +30,42 @@ class Factory
     }
 
     /**
-     * Creates new Block object from class.
+     * Creates new ReflectionDoc instance from class.
      *
-     * @param  string   $path
-     * @return ClassDoc
+     * @param  string        $path
+     * @return ReflectionDoc
      */
-    public function make($class): Doc
+    public function make($class): ReflectionDoc
     {
         $block = $this->resolveClassDoc($class);
 
-        $reflection = new ReflectionClass($class);
+        $reflector = new ReflectionClass($class);
 
-        return $this->makeFrom($block, $class, $reflection);
+        return $this->makeFrom($block, $class, $reflector);
     }
 
-    public function makeFrom($block, $class, $reflection)
+    /**
+     * Create new ReflectionDoc from class for reflector.
+     *
+     * @param  string        $doc
+     * @param  string        $class
+     * @param  Reflector     $reflector
+     * @return ReflectionDoc
+     */
+    public function makeFrom($doc, $class, Reflector $reflector): ReflectionDoc
     {
-        return app()->make($block, [
-            'class'      => $class,
-            'reflection' => $reflection,
+        return app()->make($doc, [
+            'class'     => $class,
+            'reflector' => $reflector,
         ]);
     }
 
+    /**
+     * Resolve class doc.
+     *
+     * @param  string $class
+     * @return string
+     */
     public function resolveClassDoc($class)
     {
         foreach ($this->bindings as $dependency => $binding) {

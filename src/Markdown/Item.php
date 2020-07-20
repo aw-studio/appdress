@@ -2,9 +2,9 @@
 
 namespace Docs\Markdown;
 
-use Docs\Contracts\MarkdownItem;
+use Docs\Contracts\Markdownable;
 
-abstract class Item implements MarkdownItem
+abstract class Item implements Markdownable
 {
     public static function markdown(...$arguments)
     {

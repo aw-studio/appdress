@@ -7,13 +7,45 @@ use ReflectionMethod;
 
 class MethodDoc extends ReflectionDoc
 {
-    public function __construct(Parser $parser, string $class, ReflectionMethod $reflection)
+    /**
+     * Method reflector.
+     *
+     * @var ReflectionMethod
+     */
+    protected $reflector;
+
+    /**
+     * Create new MethodDoc instance.
+     *
+     * @param  Parser           $parser
+     * @param  string           $class
+     * @param  ReflectionMethod $reflector
+     * @return void
+     */
+    public function __construct(Parser $parser, string $class, ReflectionMethod $reflector)
     {
-        parent::__construct($parser, $class, $reflection);
+        parent::__construct($parser, $class, $reflector);
     }
 
-    public function getTitle()
+    /**
+     * Doc title.
+     *
+     * @return string
+     */
+    public function title()
     {
-        return $this->reflection->name;
+        return $this->reflector->name;
+    }
+
+    /**
+     * Describe method.
+     *
+     * @return array
+     */
+    public function describe()
+    {
+        return [
+            $this->getSummary(),
+        ];
     }
 }

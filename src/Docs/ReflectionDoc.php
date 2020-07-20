@@ -4,125 +4,112 @@ namespace Docs\Docs;
 
 use Docs\Contracts\Doc;
 use Docs\Contracts\Parser;
-use Docs\Support\Markdown;
+use Illuminate\Support\Collection;
+use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlockFactory;
+use Reflector;
 
-class ReflectionDoc implements Doc
+abstract class ReflectionDoc extends BaseDoc
 {
-    protected $parser;
-
+    /**
+     * Documented class.
+     *
+     * @var string
+     */
     protected $class;
 
-    protected $reflection;
+    /**
+     * Reflector.
+     *
+     * @var Reflector
+     */
+    protected $reflector;
 
-    protected $docBlock;
-
-    protected $depth = 1;
-
-    public function __construct(Parser $parser, string $class, $reflection)
+    /**
+     * Create new ReflectionDoc instance.
+     *
+     * @param  Parser    $parser
+     * @param  string    $class
+     * @param  Reflector $reflector
+     * @return void
+     */
+    public function __construct(Parser $parser, string $class, Reflector $reflector)
     {
-        $this->parser = $parser;
+        parent::__construct($parser);
         $this->class = $class;
-        $this->reflection = $reflection;
+        $this->reflector = $reflector;
         $this->factory = DocBlockFactory::createInstance();
     }
 
-    public function subTitle($title)
-    {
-        return Markdown::title($title, $this->depth + 1);
-    }
-
-    public function setDepth(int $depth)
-    {
-        $this->depth = $depth;
-
-        return $this;
-    }
-
-    public function getDepth(): int
-    {
-        return $this->depth;
-    }
-
-    public function getTitle()
+    /**
+     * Doc title.
+     *
+     * @return string
+     */
+    public function title()
     {
         return class_basename($this->class);
     }
 
-    public function getDescription(): array
+    /**
+     * Get summary from reflector.
+     *
+     * @param  Reflector|null $reflector
+     * @return Collection
+     */
+    public function getSummary(Reflector $reflector = null): Collection
     {
-        $desc = $this->prependDescription();
-
-        if ($this->getDocBlock() && $summary = $this->getDocBlock()->getSummary()) {
-            $desc[] = $summary;
+        if (! $docBlock = $this->getDocBlock($reflector)) {
+            return collect([]);
         }
 
-        if ($this->getDocBlock() && $description = $this->getDocBlock()->getDescription()) {
-            $desc[] = $description->getBodyTemplate();
+        $summary = collect([$docBlock->getSummary()]);
+
+        if (! $description = $docBlock->getDescription()) {
+            return $summary;
         }
 
-        $desc = array_merge($desc, $this->addDescription());
+        $summary[] = $description->getBodyTemplate();
 
-        return $desc;
+        return $summary;
     }
 
-    public function prependDescription(): array
+    /**
+     * Make Doc from reflector.
+     *
+     * @param  string    $class
+     * @param  Reflector $reflector
+     * @return Doc
+     */
+    protected function subDoc($class, Reflector $reflector = null): self
     {
-        return [];
-    }
-
-    public function addDescription(): array
-    {
-        return [];
-    }
-
-    public function getChildren()
-    {
-        return [];
-    }
-
-    protected function makeBlock($class, $reflection = null)
-    {
-        $block = app('docs.factory')->makeFrom(
+        $doc = app('docs.factory')->makeFrom(
             $class,
             $this->class,
-            $reflection ?: $this->reflection
+            $reflector ?: $this->reflector
         );
 
-        $block->setDepth($this->depth + 1);
+        $doc->setDepth($this->depth + 1);
 
-        return $block;
+        return $doc;
     }
 
-    public function getDocBlock($reflection = null)
+    /**
+     * Get doc block instance.
+     *
+     * @param  ReflectionClass|ReflectionClassConstant|ReflectionFunctionAbstract|ReflectionProperty $reflector
+     * @return DocBlock
+     */
+    public function getDocBlock($reflector = null)
     {
-        if (! $reflection) {
-            $reflection = $this->reflection;
+        if (! $reflector) {
+            $reflector = $this->reflector;
         }
 
-        if ($this->docBlock) {
-            return $this->docBlock;
-        }
-
-        if (! $comment = $reflection->getDocComment()) {
+        if (! $comment = $reflector->getDocComment()) {
             return;
         }
 
         return $this->docBlock = $this->factory->create($comment);
-    }
-
-    public function toMarkdown()
-    {
-        return $this->parser->toMarkdown($this);
-    }
-
-    public function toHtml()
-    {
-        return $this->parser->toHtml($this);
-    }
-
-    public function __toString()
-    {
-        return $this->toHtml() ?? '';
     }
 }
