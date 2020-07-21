@@ -25,13 +25,19 @@ trait DescribesMethods
         }
 
         return [
-            $this->subTitle('Methods'),
+            //$this->subTitle('Methods'),
             $methods->map(function ($method) {
                 return $this->subDoc(ControllerMethodDoc::class, $method);
             }),
         ];
     }
 
+    /**
+     * Determines if the controller only has the invoke method.
+     *
+     * @param  Collection $methods
+     * @return bool
+     */
     protected function isInvokeOnly(Collection $methods)
     {
         return $methods->count() == 1 && $methods->first()->name == '__invoke';

@@ -10,7 +10,8 @@
 	"require": {
 		"doctrine/dbal": "^2.10",
 		"phpdocumentor/reflection-docblock": "^5.1",
-		"symfony/class-loader": "^3.4"
+		"symfony/class-loader": "^3.4",
+		"erusev/parsedown-extra": "^0.8"
 	},
 	"autoload": {
 		"psr-4": {

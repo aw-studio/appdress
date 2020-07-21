@@ -40,7 +40,7 @@ trait DescribesRequest
 
         return [
             $this->subTitle('Rules'),
-            $this->getSummary($method),
+            //$this->getSummary($method),
             $this->rulesTable(),
         ];
     }

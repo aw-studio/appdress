@@ -11,11 +11,6 @@ class ControllerMethodDoc extends MethodDoc
     use Concerns\DescribesRequest,
         Concerns\ManagesRoutes;
 
-    public function title()
-    {
-        return Markdown::code(parent::title());
-    }
-
     /**
      * Describe controller method.
      *
@@ -25,6 +20,7 @@ class ControllerMethodDoc extends MethodDoc
     {
         return [
             $this->describeRoute(),
+            $this->getSummary(),
             $this->describeDependencies(),
             $this->describeRequest(),
         ];
@@ -37,9 +33,13 @@ class ControllerMethodDoc extends MethodDoc
      */
     protected function describeDependencies()
     {
+        if (! $dependenciesTable = $this->dependenciesTable()) {
+            return;
+        }
+
         return [
             $this->subTitle('Dependencies'),
-            $this->dependenciesTable(),
+            $dependenciesTable,
         ];
     }
 
@@ -73,6 +73,10 @@ class ControllerMethodDoc extends MethodDoc
             ];
         }
 
+        if (empty($rows)) {
+            return;
+        }
+
         return Markdown::table([
             'Dependency', 'Description',
         ], $rows);
@@ -90,16 +94,30 @@ class ControllerMethodDoc extends MethodDoc
         }
 
         $items = [
-            'Uri: '.Markdown::code('/'.$route->uri),
+            Markdown::code($route->methods()[0]),
+            Markdown::code('/'.$route->uri),
         ];
 
         if ($route->getName()) {
-            $items[] = 'Uri: '.Markdown::code($route->getName());
+            $items[] = Markdown::code($route->getName());
         }
 
         return [
-            $this->subTitle('Route'),
-            Markdown::list($items),
+            implode(' ', $items),
         ];
+    }
+
+    /**
+     * Get route uri.
+     *
+     * @return void
+     */
+    protected function getUri()
+    {
+        if (! $route = $this->getRoute($this->reflector)) {
+            return;
+        }
+
+        return $route->uri;
     }
 }

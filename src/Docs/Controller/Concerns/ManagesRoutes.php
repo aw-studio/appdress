@@ -4,6 +4,7 @@ namespace Docs\Docs\Controller\Concerns;
 
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use Illuminate\Support\Str;
 use ReflectionMethod;
 
 trait ManagesRoutes
@@ -16,7 +17,15 @@ trait ManagesRoutes
     public function getRoutes()
     {
         return collect(RouteFacade::getRoutes()->getRoutes())->filter(function ($route) {
-            if (! $controller = $route->action['controller'] ?? null) {
+            if (! $uses = $route->action['uses']) {
+                return false;
+            }
+
+            if (! is_string($uses)) {
+                return false;
+            }
+
+            if (! $controller = Str::parseCallback($uses)[0]) {
                 return false;
             }
 
