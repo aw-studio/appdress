@@ -2,7 +2,9 @@
 
 namespace Docs\Navigation;
 
+use Docs\Contracts\Doc;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Symfony\Component\ClassLoader\ClassMapGenerator;
 
 class Section
@@ -11,12 +13,12 @@ class Section
 
     protected $children = [];
 
-    protected $class;
+    protected $item;
 
-    public function __construct($title, $class = null)
+    public function __construct($title, $item = null)
     {
         $this->title = $title;
-        $this->class = $class;
+        $this->item = $item;
     }
 
     public function getTitle()
@@ -24,25 +26,56 @@ class Section
         return $this->title;
     }
 
-    public function describe($path)
+    public function describeRoutes()
     {
-        $map = ClassMapGenerator::createMap($path);
+        return $this->describe(__DIR__.'/../Docs/Routes');
+    }
 
-        foreach (File::files($path) as $file) {
-            if ($file->getExtension() != 'php') {
+    public function describe($describe, $nested = false)
+    {
+        return $this->describePath($describe, $nested);
+    }
+
+    public function describePath($descriptionPath, $nested = false)
+    {
+        $map = ClassMapGenerator::createMap($descriptionPath);
+
+        foreach ($map as $class => $path) {
+            if (! $nested && realpath(dirname($path)) != realpath($descriptionPath)) {
                 continue;
             }
-            foreach ($map as $class => $filePath) {
-                if ($file->getPathname() == $filePath) {
-                    $this->addChild(str_replace('.php', '', basename($file)), $class);
-                }
+
+            if (! class_exists($class)) {
+                continue;
             }
+
+            if (class_is_abstract($class)) {
+                continue;
+            }
+
+            $this->addChild(explode('.', basename($path))[0], $class);
+        }
+
+        if (! $nested) {
+            return;
+        }
+        foreach (File::directories($descriptionPath) as $dir) {
+            $files = collect(File::files($dir))->map(fn ($file) => $file->getPathname())->toArray();
+
+            $section = new self(basename($dir));
+
+            $section->describe($dir);
+            $this->children[] = $section;
         }
     }
 
-    public function addChild($title, $class)
+    public function addChild($title, $item)
     {
-        $this->children[] = new self($title, $class);
+        if (instance_of($item, Doc::class)) {
+            $title = Str::replaceLast('Doc', '', $title);
+        }
+
+        $this->children[] = new self($title, $item);
 
         return $this;
     }
@@ -54,15 +87,17 @@ class Section
 
     public function getClass()
     {
-        return $this->class;
+        return $this->item;
     }
 
     public function route()
     {
-        if (! $this->class) {
+        if (! $this->item) {
             return;
         }
 
-        return route('docs.class', ['class' => $this->class]);
+        if (class_exists($this->item)) {
+            return route('docs.class', ['class' => $this->item]);
+        }
     }
 }

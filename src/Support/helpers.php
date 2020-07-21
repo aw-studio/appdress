@@ -14,7 +14,7 @@ if (! function_exists('instance_of')) {
             return true;
         }
 
-        if (! class_exists($class) || ! class_exists($match)) {
+        if (! class_exists($class) || ! class_exists($match) && ! interface_exists($match)) {
             return false;
         }
 
@@ -36,5 +36,31 @@ if (! function_exists('instance_of')) {
 
         // Match recursive parent classes.
         return instance_of($parent, $match);
+    }
+}
+
+if (! function_exists('get_path_from_namespace')) {
+    /**
+     * Get path from namespace.
+     *
+     * @param  string $namespace
+     * @return string
+     */
+    function get_path_from_namespace(string $namespace)
+    {
+        return (new ReflectionClass($namespace))->getFileName();
+    }
+}
+
+if (! function_exists('class_is_abstract')) {
+    /**
+     * Get path from namespace.
+     *
+     * @param  string $class
+     * @return string
+     */
+    function class_is_abstract(string $class)
+    {
+        return (new ReflectionClass($class))->isAbstract();
     }
 }

@@ -3,19 +3,19 @@
 namespace Docs\Docs;
 
 use Docs\Contracts\Doc;
+use Docs\Contracts\Engine;
 use Docs\Contracts\Markdownable;
-use Docs\Contracts\Parser;
 use Docs\Markdown\Title;
 use Docs\Support\Markdown;
 
 abstract class BaseDoc implements Doc, Markdownable
 {
     /**
-     * Parser instance.
+     * Engine instance.
      *
-     * @var Parser
+     * @var Engine
      */
-    protected $parser;
+    protected $engine;
 
     /**
      * Doc depth.
@@ -41,12 +41,24 @@ abstract class BaseDoc implements Doc, Markdownable
     /**
      * Create new BaseDoc instance.
      *
-     * @param  Parser $parser
+     * @param  Engine $engine
+     * @param  string $path
      * @return void
      */
-    public function __construct(Parser $parser)
+    public function __construct(Engine $engine, $path)
     {
-        $this->parser = $parser;
+        $this->engine = $engine;
+        $this->path = $path;
+    }
+
+    /**
+     * Get doc file path.
+     *
+     * @return void
+     */
+    public function getPath()
+    {
+        return $this->path;
     }
 
     /**
@@ -122,7 +134,7 @@ abstract class BaseDoc implements Doc, Markdownable
      */
     public function toMarkdown()
     {
-        return $this->parser->toMarkdown($this);
+        return $this->engine->getMarkdown($this);
     }
 
     /**
@@ -132,7 +144,7 @@ abstract class BaseDoc implements Doc, Markdownable
      */
     public function toHtml()
     {
-        return $this->parser->toHtml($this);
+        return $this->engine->getHtml($this);
     }
 
     /**

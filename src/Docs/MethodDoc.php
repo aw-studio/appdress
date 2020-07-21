@@ -2,8 +2,7 @@
 
 namespace Docs\Docs;
 
-use Docs\Contracts\Parser;
-use Illuminate\Support\Collection;
+use Docs\Contracts\Engine;
 use ReflectionMethod;
 
 class MethodDoc extends ReflectionDoc
@@ -18,14 +17,14 @@ class MethodDoc extends ReflectionDoc
     /**
      * Create new MethodDoc instance.
      *
-     * @param  Parser           $parser
+     * @param  Engine           $engine
      * @param  string           $class
      * @param  ReflectionMethod $reflector
      * @return void
      */
-    public function __construct(Parser $parser, string $class, ReflectionMethod $reflector)
+    public function __construct(Engine $engine, string $class, ReflectionMethod $reflector)
     {
-        parent::__construct($parser, $class, $reflector);
+        parent::__construct($engine, $class, $reflector);
     }
 
     /**
@@ -47,16 +46,7 @@ class MethodDoc extends ReflectionDoc
     {
         return [
             $this->getSummary(),
+            $this->describeDependencies($this->reflector),
         ];
-    }
-
-    /**
-     * Get method parameters.
-     *
-     * @return Collection
-     */
-    public function getParameters()
-    {
-        return collect($this->reflector->getParameters());
     }
 }

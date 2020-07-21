@@ -21,38 +21,19 @@ class ControllerMethodDoc extends MethodDoc
         return [
             $this->describeRoute(),
             $this->getSummary(),
-            $this->describeDependencies(),
             $this->describeRequest(),
+            $this->describeDependencies($this->reflector),
         ];
     }
 
     /**
-     * Describe dependencies.
+     * Get parameter dependencies.
      *
-     * @return array
+     * @return Collection
      */
-    protected function describeDependencies()
+    protected function getDependencies()
     {
-        if (! $dependenciesTable = $this->dependenciesTable()) {
-            return;
-        }
-
-        return [
-            $this->subTitle('Dependencies'),
-            $dependenciesTable,
-        ];
-    }
-
-    /**
-     * Dependencies table.
-     *
-     * @return Table
-     */
-    protected function dependenciesTable()
-    {
-        $rows = [];
-
-        $dependencies = $this->getParameters()->map(function ($param) {
+        return parent::getDependencies()->map(function ($param) {
             if (! $type = $this->paramTypeName($param)) {
                 return;
             }
@@ -63,23 +44,8 @@ class ControllerMethodDoc extends MethodDoc
                 return;
             }
 
-            return $this->reflectParameterClass($param);
+            return $param;
         })->filter();
-
-        foreach ($dependencies as $dependency) {
-            $rows[] = [
-                Markdown::code($dependency->name),
-                $this->getSummary($dependency)->implode("\n"),
-            ];
-        }
-
-        if (empty($rows)) {
-            return;
-        }
-
-        return Markdown::table([
-            'Dependency', 'Description',
-        ], $rows);
     }
 
     /**
@@ -89,35 +55,22 @@ class ControllerMethodDoc extends MethodDoc
      */
     protected function describeRoute()
     {
-        if (! $route = $this->getRoute($this->reflector)) {
+        $routes = $this->getRoutesForMethod($this->reflector);
+        if ($routes->isEmpty()) {
             return;
         }
 
-        $items = [
-            Markdown::code($route->methods()[0]),
-            Markdown::code('/'.$route->uri),
-        ];
+        return $routes->map(function ($route) {
+            $items = [
+                Markdown::code($route->methods()[0]),
+                Markdown::code('/'.$route->uri),
+            ];
 
-        if ($route->getName()) {
-            $items[] = Markdown::code($route->getName());
-        }
+            if ($route->getName()) {
+                $items[] = Markdown::code($route->getName());
+            }
 
-        return [
-            implode(' ', $items),
-        ];
-    }
-
-    /**
-     * Get route uri.
-     *
-     * @return void
-     */
-    protected function getUri()
-    {
-        if (! $route = $this->getRoute($this->reflector)) {
-            return;
-        }
-
-        return $route->uri;
+            return implode(' ', $items);
+        })->implode('<br>');
     }
 }

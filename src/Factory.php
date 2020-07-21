@@ -3,6 +3,7 @@
 namespace Docs;
 
 use Closure;
+use Docs\Contracts\Doc;
 use Docs\Docs\ClassDoc;
 use Docs\Docs\ReflectionDoc;
 use ReflectionClass;
@@ -34,27 +35,55 @@ class Factory
     /**
      * Creates new ReflectionDoc instance from class.
      *
-     * @param  string        $path
-     * @return ReflectionDoc
+     * @param  string $path
+     * @return Doc
      */
-    public function make($class): ReflectionDoc
+    public function make($abstract): Doc
     {
-        $block = $this->resolveClassDoc($class);
+        $doc = $this->resolveClassDoc($abstract);
 
-        $reflector = new ReflectionClass($class);
+        if ($this->isClass($abstract)) {
+            $reflector = new ReflectionClass($abstract);
+        }
 
-        return $this->makeFrom($block, $class, $reflector);
+        if ($this->isFile($abstract)) {
+            dd('TODO');
+        }
+
+        return $this->makeFrom($doc, $abstract, $reflector ?? null);
+    }
+
+    /**
+     * Determine if abstract is class.
+     *
+     * @param  string $abstract
+     * @return bool
+     */
+    public function isClass($abstract)
+    {
+        return class_exists($abstract);
+    }
+
+    /**
+     * Determine if abstract is file.
+     *
+     * @param  string $abstract
+     * @return bool
+     */
+    public function isFile($abstract)
+    {
+        return false;
     }
 
     /**
      * Create new ReflectionDoc from class for reflector.
      *
-     * @param  string        $doc
-     * @param  string        $class
-     * @param  Reflector     $reflector
-     * @return ReflectionDoc
+     * @param  string    $doc
+     * @param  string    $class
+     * @param  Reflector $reflector
+     * @return Doc
      */
-    public function makeFrom($doc, $class, Reflector $reflector): ReflectionDoc
+    public function makeFrom($doc, $class, Reflector $reflector = null): Doc
     {
         return app()->make($doc, [
             'class'     => $class,
@@ -70,6 +99,10 @@ class Factory
      */
     public function resolveClassDoc($class)
     {
+        if (instance_of($class, Doc::class)) {
+            return $class;
+        }
+
         foreach ($this->bindings as $dependency => $binding) {
             if ($binding instanceof Closure && $binding($class)) {
                 return $dependency;

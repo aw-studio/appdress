@@ -60,7 +60,7 @@ trait DescribesRequest
         }
 
         return Markdown::table([
-            'Attribute', 'Rules', 'Parameters', 'Description',
+            'Attribute', 'Rules', 'Parameters', 'Message',
         ], $rows);
     }
 

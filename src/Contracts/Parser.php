@@ -13,10 +13,11 @@ interface Parser
     public function toMarkdown(Doc $doc);
 
     /**
-     * Parse Doc to Html.
+     * Parse markdown to Html.
      *
-     * @param  Doc    $doc
+     * @param  string $markdown
+     * @param  bool   $withToc
      * @return string
      */
-    public function toHtml(Doc $doc);
+    public function toHtml($markdown, bool $withToc = true);
 }

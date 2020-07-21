@@ -50,9 +50,9 @@ trait ManagesRoutes
      * @param  ReflectionMethod $method
      * @return Route|null
      */
-    public function getRoute(ReflectionMethod $method)
+    public function getRoutesForMethod(ReflectionMethod $method)
     {
-        return $this->getRoutes()->first(function ($route) use ($method) {
+        return $this->getRoutes()->filter(function ($route) use ($method) {
             return $this->getRouteControllerMethod($route) == $method->name;
         });
     }

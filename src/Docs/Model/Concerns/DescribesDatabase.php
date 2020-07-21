@@ -3,7 +3,7 @@
 namespace Docs\Docs\Model\Concerns;
 
 use Docs\Support\Markdown;
-use Illuminate\Support\Facades\Schema;
+use Docs\Support\Schema;
 use phpDocumentor\Reflection\DocBlock\Tags\PropertyRead;
 
 trait DescribesDatabase
@@ -31,10 +31,8 @@ trait DescribesDatabase
     {
         $rows = [];
 
-        $schema = Schema::connection('docs_sqlite');
-
-        $columns = collect($schema->getColumnListing($this->getTable()))->mapWithKeys(function ($column) use ($schema) {
-            return [$column => $schema->getColumnType($this->getTable(), $column)];
+        $columns = collect(Schema::getColumnListing($this->getTable()))->mapWithKeys(function ($column) {
+            return [$column => Schema::getColumnType($this->getTable(), $column)];
         })->sortDesc();
 
         if (empty($columns)) {

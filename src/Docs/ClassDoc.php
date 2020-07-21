@@ -2,8 +2,9 @@
 
 namespace Docs\Docs;
 
-use Docs\Contracts\Parser;
+use Docs\Contracts\Engine;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -19,14 +20,14 @@ class ClassDoc extends ReflectionDoc
     /**
      * Create new ClassDoc instance.
      *
-     * @param  Parser          $parser
+     * @param  Engine          $engine
      * @param  string          $class
      * @param  ReflectionClass $reflector
      * @return void
      */
-    public function __construct(Parser $parser, string $class, ReflectionClass $reflector)
+    public function __construct(Engine $engine, string $class, ReflectionClass $reflector)
     {
-        parent::__construct($parser, $class, $reflector);
+        parent::__construct($engine, $class, $reflector);
     }
 
     /**
@@ -48,8 +49,11 @@ class ClassDoc extends ReflectionDoc
     {
         return [
             $this->getSummary(),
+            $this->describeDependencies(
+                $this->reflectClassMethod($this->reflector, '__construct')
+            ),
             $this->describeMethods(
-                $this->getOwnMethods()
+                $this->withoutMagic($this->getOwnMethods())
             ),
         ];
     }
@@ -111,6 +115,13 @@ class ClassDoc extends ReflectionDoc
         return $this->publicMethods(
             $this->getOwnMethods()
         );
+    }
+
+    public function withoutMagic(Collection $methods)
+    {
+        return $methods->filter(function (ReflectionMethod $method) {
+            return ! Str::startsWith($method->name, '__');
+        });
     }
 
     /**

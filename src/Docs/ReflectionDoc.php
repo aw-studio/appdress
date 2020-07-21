@@ -3,16 +3,20 @@
 namespace Docs\Docs;
 
 use Docs\Contracts\Doc;
-use Docs\Contracts\Parser;
+use Docs\Contracts\Engine;
+use Docs\Docs\Concerns\DescribesDependencies;
 use Illuminate\Support\Collection;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlockFactory;
 use ReflectionClass;
+use ReflectionMethod;
 use ReflectionParameter;
 use Reflector;
 
 abstract class ReflectionDoc extends BaseDoc
 {
+    use DescribesDependencies;
+
     /**
      * Documented class.
      *
@@ -30,14 +34,14 @@ abstract class ReflectionDoc extends BaseDoc
     /**
      * Create new ReflectionDoc instance.
      *
-     * @param  Parser    $parser
+     * @param  Engine    $engine
      * @param  string    $class
      * @param  Reflector $reflector
      * @return void
      */
-    public function __construct(Parser $parser, string $class, Reflector $reflector)
+    public function __construct(Engine $engine, string $class, Reflector $reflector)
     {
-        parent::__construct($parser);
+        parent::__construct($engine, get_path_from_namespace($class));
         $this->class = $class;
         $this->reflector = $reflector;
         $this->factory = DocBlockFactory::createInstance();
@@ -82,6 +86,26 @@ abstract class ReflectionDoc extends BaseDoc
         return $summary->merge(
             $this->getInvokeSummary($reflector)
         );
+    }
+
+    /**
+     * Get parameter summary.
+     *
+     * @param  ReflectionMethod    $method
+     * @param  ReflectionParameter $parameter
+     * @return array|null
+     */
+    public function getParameterSummary(ReflectionMethod $method, ReflectionParameter $parameter)
+    {
+        if (! $docBlock = $this->getDocBlock($method)) {
+            return;
+        }
+
+        foreach ($docBlock->getTags() as $tag) {
+            if ($tag->getVariableName() == $parameter->name) {
+                return $tag->getDescription()->getBodyTemplate();
+            }
+        }
     }
 
     /**
@@ -158,6 +182,10 @@ abstract class ReflectionDoc extends BaseDoc
             return;
         }
 
+        if (! class_exists($name)) {
+            return;
+        }
+
         return new ReflectionClass($name);
     }
 
@@ -190,5 +218,63 @@ abstract class ReflectionDoc extends BaseDoc
         }
 
         return $type->getName();
+    }
+
+    /**
+     * Get dependencies.
+     *
+     * @param  ReflectionClass|ReflectionMethod $reflector
+     * @return Collection
+     */
+    // public function getDependencies($reflector = null)
+    // {
+    //     $reflector = $this->resolveReflector($reflector);
+
+    //     if ($reflector instanceof ReflectionClass) {
+    //         $reflector = $this->reflectClassMethod($reflector, '__construct');
+    //     }
+
+    //     if (! $reflector) {
+    //         return collect([]);
+    //     }
+
+    //     return $this->getParameters($reflector)->map(function (ReflectionParameter $parameter) {
+    //     });
+    // }
+
+    /**
+     * Resolve reflector.
+     *
+     * @param  Reflector $reflector
+     * @return Reflector
+     */
+    protected function resolveReflector(Reflector $reflector = null)
+    {
+        if (! $reflector) {
+            return $this->reflector;
+        }
+
+        return $reflector;
+    }
+
+    /**
+     * Get method parameters.
+     *
+     * @param  ReflectionMethod|null $reflector
+     * @return Collection
+     */
+    public function getParameters(ReflectionMethod $reflector = null)
+    {
+        $reflector = $this->resolveReflector($reflector);
+
+        if ($reflector instanceof ReflectionClass) {
+            $reflector = $this->reflectClassMethod($reflector, '__construct');
+        }
+
+        if (! $reflector) {
+            return collect([]);
+        }
+
+        return collect($reflector->getParameters());
     }
 }

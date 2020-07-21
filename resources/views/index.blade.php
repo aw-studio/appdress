@@ -3,8 +3,7 @@
 @section('content')
 
 <div>
-{!! $docs !!}
+Index
 </div>
-
 
 @endsection
