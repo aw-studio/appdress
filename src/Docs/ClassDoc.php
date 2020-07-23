@@ -10,6 +10,8 @@ use ReflectionMethod;
 
 class ClassDoc extends ReflectionDoc
 {
+    use Concerns\DescribesTests;
+
     /**
      * Class reflector.
      *
@@ -49,11 +51,15 @@ class ClassDoc extends ReflectionDoc
     {
         return [
             $this->getSummary(),
+
             $this->describeDependencies(
                 $this->reflectClassMethod($this->reflector, '__construct')
             ),
+
+            $this->describeTests(),
+
             $this->describeMethods(
-                $this->withoutMagic($this->getOwnMethods())
+                $this->withoutMagic($this->getOwnPublicMethods())
             ),
         ];
     }
@@ -61,22 +67,26 @@ class ClassDoc extends ReflectionDoc
     /**
      * Get class methods.
      *
+     * @param  ReflectionClass $reflector
      * @return Collection
      */
-    public function getMethods(): Collection
+    public function getMethods(ReflectionClass $reflector = null): Collection
     {
-        return collect($this->reflector->getMethods());
+        $reflector = $this->resolveReflector($reflector);
+
+        return collect($reflector->getMethods());
     }
 
     /**
      * Get own public methods.
      *
+     * @param  ReflectionClass $reflector
      * @return Collection
      */
-    public function getPublicMethods()
+    public function getPublicMethods(ReflectionClass $reflector = null)
     {
         return $this->publicMethods(
-            $this->getMethods()
+            $this->getMethods($reflector)
         );
     }
 
@@ -96,24 +106,28 @@ class ClassDoc extends ReflectionDoc
     /**
      * Get own class methods.
      *
+     * @param  ReflectionClass $reflector
      * @return Collection
      */
-    public function getOwnMethods(): Collection
+    public function getOwnMethods(ReflectionClass $reflector = null): Collection
     {
-        return $this->getMethods()->filter(function (ReflectionMethod $method) {
-            return $method->class === $this->class;
+        $reflector = $this->resolveReflector($reflector);
+
+        return $this->getMethods($reflector)->filter(function (ReflectionMethod $method) use ($reflector) {
+            return $method->class === $reflector->name;
         });
     }
 
     /**
      * Get own public methods.
      *
+     * @param  ReflectionClass $reflector
      * @return Collection
      */
-    public function getOwnPublicMethods()
+    public function getOwnPublicMethods(ReflectionClass $reflector = null)
     {
         return $this->publicMethods(
-            $this->getOwnMethods()
+            $this->getOwnMethods($reflector)
         );
     }
 
