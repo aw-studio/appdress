@@ -102,6 +102,9 @@ abstract class ReflectionDoc extends BaseDoc
         }
 
         foreach ($docBlock->getTags() as $tag) {
+            if (! method_exists($tag, 'getVariableName')) {
+                continue;
+            }
             if ($tag->getVariableName() == $parameter->name) {
                 return $tag->getDescription()->getBodyTemplate();
             }
@@ -219,28 +222,6 @@ abstract class ReflectionDoc extends BaseDoc
 
         return $type->getName();
     }
-
-    /**
-     * Get dependencies.
-     *
-     * @param  ReflectionClass|ReflectionMethod $reflector
-     * @return Collection
-     */
-    // public function getDependencies($reflector = null)
-    // {
-    //     $reflector = $this->resolveReflector($reflector);
-
-    //     if ($reflector instanceof ReflectionClass) {
-    //         $reflector = $this->reflectClassMethod($reflector, '__construct');
-    //     }
-
-    //     if (! $reflector) {
-    //         return collect([]);
-    //     }
-
-    //     return $this->getParameters($reflector)->map(function (ReflectionParameter $parameter) {
-    //     });
-    // }
 
     /**
      * Resolve reflector.

@@ -20,7 +20,7 @@ trait DescribesDependencies
         }
 
         return [
-            $this->subTitle('Dependencies'),
+            //$this->subTitle('Dependencies'),
             $dependenciesTable,
         ];
     }
@@ -51,7 +51,7 @@ trait DescribesDependencies
                 $this->describeDependencyName($parameter),
                 $this->describeDependencyType($parameter),
                 $this->describeDependency($parameter, $method),
-                '',
+                //'',
             ];
         });
 
@@ -60,7 +60,7 @@ trait DescribesDependencies
         }
 
         return Markdown::table([
-            'Dependency', 'Type', 'Description', 'Test',
+            'Dependency', 'Type', 'Description', //'Test',
         ], $rows->toArray());
     }
 
@@ -86,10 +86,11 @@ trait DescribesDependencies
 
     protected function describeDependency(ReflectionParameter $parameter, ReflectionMethod $method)
     {
+        if ($summary = $this->getParameterSummary($method, $parameter)) {
+            return $summary;
+        }
         if ($type = $this->reflectParameterClass($parameter)) {
             return $this->getSummary($type)->implode("\n");
         }
-
-        return $this->getParameterSummary($method, $parameter);
     }
 }

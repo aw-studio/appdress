@@ -41,7 +41,7 @@ class Section
         $map = ClassMapGenerator::createMap($descriptionPath);
 
         foreach ($map as $class => $path) {
-            if (! $nested && realpath(dirname($path)) != realpath($descriptionPath)) {
+            if (realpath(dirname($path)) != realpath($descriptionPath)) {
                 continue;
             }
 
