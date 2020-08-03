@@ -13,8 +13,15 @@ class ControllerDoc extends ClassDoc
     {
         return [
             $this->getSummary(),
+
+            $this->describeDependencies(
+                $this->reflectClassMethod($this->reflector, '__construct')
+            ),
+
+            $this->describeTests(),
+
             $this->describeMethods(
-                $this->getOwnPublicMethods()
+                $this->withoutMagic($this->getOwnPublicMethods())
             ),
         ];
     }

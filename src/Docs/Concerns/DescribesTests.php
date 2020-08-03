@@ -10,6 +10,9 @@ use phpDocumentor\Reflection\DocBlock\Tag;
 use ReflectionClass;
 use ReflectionMethod;
 
+/**
+ * Test case description is only required for classes not for methods.
+ */
 trait DescribesTests
 {
     /**
@@ -32,7 +35,7 @@ trait DescribesTests
     }
 
     /**
-     * Undocumented function.
+     * Make test cases table.
      *
      * @param  Collection $tests
      * @return Table
@@ -41,7 +44,7 @@ trait DescribesTests
     {
         $rows = $tests->map(function (ReflectionMethod $method) {
             return [
-                ucfirst(str_replace('_', ' ', Str::snake($method->name))),
+                ucfirst(str_replace('_', ' ', $method->name)),
                 '✔️',
             ];
         })->toArray();

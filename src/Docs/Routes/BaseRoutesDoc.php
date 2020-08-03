@@ -30,7 +30,7 @@ abstract class BaseRoutesDoc extends BaseDoc
 
         $rows = $routes->map(function (Route $route) {
             return [
-                Markdown::code($route->uri),
+                Markdown::code("/{$route->uri}"),
                 Markdown::code(implode('`,`', $route->methods())),
                 $route->actionDescription,
                 $route->getName(),
