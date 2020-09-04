@@ -2,8 +2,6 @@
 
 namespace Docs\Markdown;
 
-use Illuminate\Support\Str;
-
 class Title extends Item
 {
     protected $title;
@@ -21,13 +19,7 @@ class Title extends Item
         return implode('', [
             $this->renderPrefix(),
             $this->title,
-            $this->renderLink(),
         ]);
-    }
-
-    public function renderLink()
-    {
-        return '<a name="'.Str::slug($this->title).'"></a>';
     }
 
     public function renderPrefix()
