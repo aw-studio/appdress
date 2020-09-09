@@ -4,6 +4,7 @@ namespace Docs\Docs\Model\Concerns;
 
 use Docs\Support\Markdown;
 use Docs\Support\Schema;
+use Illuminate\Support\Facades\Cache;
 use phpDocumentor\Reflection\DocBlock\Tags\PropertyRead;
 
 trait DescribesDatabase
@@ -29,30 +30,34 @@ trait DescribesDatabase
      */
     public function describeSchema()
     {
-        $rows = [];
+        $classKey = str_replace('\\', '.', $this->class);
 
-        $columns = collect(Schema::getColumnListing($this->getTable()))->mapWithKeys(function ($column) {
-            return [$column => Schema::getColumnType($this->getTable(), $column)];
-        })->sortDesc();
+        return Cache::remember("appdress.model.schema.{$classKey}", now()->addHour(), function () {
+            $rows = [];
 
-        if (empty($columns)) {
-            return;
-        }
+            $columns = collect(Schema::getColumnListing($this->getTable()))->mapWithKeys(function ($column) {
+                return [$column => Schema::getColumnType($this->getTable(), $column)];
+            })->sortDesc();
 
-        $casts = $this->getCasts();
+            if (empty($columns)) {
+                return;
+            }
 
-        foreach ($columns as $column => $type) {
-            $rows[] = [
-                Markdown::code($column),
-                Markdown::code($type),
-                $casts[$column] ?? null,
-                $this->describeColumn($column),
-            ];
-        }
+            $casts = $this->getCasts();
 
-        return Markdown::table([
-            'column', 'type', 'cast', 'description',
-        ], $rows);
+            foreach ($columns as $column => $type) {
+                $rows[] = [
+                    Markdown::code($column),
+                    Markdown::code($type),
+                    $casts[$column] ?? null,
+                    $this->describeColumn($column),
+                ];
+            }
+
+            return Markdown::table([
+                'column', 'type', 'cast', 'description',
+            ], $rows);
+        });
     }
 
     /**

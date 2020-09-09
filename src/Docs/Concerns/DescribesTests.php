@@ -30,6 +30,7 @@ trait DescribesTests
 
         return [
             $this->subTitle('Tests'),
+            'In the following the tested features are described:',
             $this->testCasesTable($tests),
         ];
     }

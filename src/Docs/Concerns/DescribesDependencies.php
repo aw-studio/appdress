@@ -48,10 +48,8 @@ trait DescribesDependencies
 
         $rows = $this->getDependencies()->map(function (ReflectionParameter $parameter) use ($method) {
             return [
-                $this->describeDependencyName($parameter),
                 $this->describeDependencyType($parameter),
                 $this->describeDependency($parameter, $method),
-                //'',
             ];
         });
 
@@ -60,23 +58,18 @@ trait DescribesDependencies
         }
 
         return Markdown::table([
-            'Dependency', 'Type', 'Description', //'Test',
+            'Dependency', 'Description', //'Test',
         ], $rows->toArray());
-    }
-
-    protected function describeDependencyName(ReflectionParameter $parameter)
-    {
-        return Markdown::code($parameter->name);
     }
 
     protected function describeDependencyType(ReflectionParameter $parameter)
     {
         if ($class = $this->reflectParameterClass($parameter)) {
             if ($class->isInternal()) {
-                return Markdown::code($class->name);
+                return Markdown::code(class_basename($class->name));
             }
 
-            return Markdown::link($class->name, route('docs.class', ['class' => $class->name]));
+            return Markdown::link(class_basename($class->name), route('appdress.class', ['class' => $class->name]));
         }
 
         if ($type = $parameter->getType()) {

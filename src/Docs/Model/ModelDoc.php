@@ -20,7 +20,7 @@ class ModelDoc extends ClassDoc
     public function describe()
     {
         return [
-            $this->getSummary(),
+            $this->getIntroduction(),
             $this->describeDatabase(),
             $this->describeAccessors(),
             $this->describeMutators(),

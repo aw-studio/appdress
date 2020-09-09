@@ -59,13 +59,9 @@ class Section
         if (! $nested) {
             return;
         }
+
         foreach (File::directories($descriptionPath) as $dir) {
-            $files = collect(File::files($dir))->map(fn ($file) => $file->getPathname())->toArray();
-
-            $section = new self(basename($dir));
-
-            $section->describe($dir);
-            $this->children[] = $section;
+            $this->describePath($dir, true);
         }
     }
 
@@ -97,7 +93,7 @@ class Section
         }
 
         if (class_exists($this->item)) {
-            return route('docs.class', ['class' => $this->item]);
+            return route('appdress.class', ['class' => $this->item]);
         }
     }
 }

@@ -139,17 +139,18 @@ abstract class ReflectionDoc extends BaseDoc
      *
      * @param  string    $class
      * @param  Reflector $reflector
+     * @param  int       $depth
      * @return Doc
      */
-    protected function subDoc($class, Reflector $reflector = null): self
+    protected function subDoc($class, Reflector $reflector = null, $depth = 1): self
     {
-        $doc = app('docs.factory')->makeFrom(
+        $doc = app('appdress.factory')->makeFrom(
             $class,
             $this->class,
             $reflector ?: $this->reflector
         );
 
-        $doc->setDepth($this->depth + 1);
+        $doc->setDepth($this->depth + $depth);
 
         return $doc;
     }

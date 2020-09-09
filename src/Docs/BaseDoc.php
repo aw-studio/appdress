@@ -65,11 +65,12 @@ abstract class BaseDoc implements Doc, Markdownable
      * Create subTitle.
      *
      * @param  string $title
+     * @param  int    $depth
      * @return Title
      */
-    public function subTitle($title)
+    public function subTitle($title, $depth = 1)
     {
-        return Markdown::title($title, $this->depth + 1);
+        return Markdown::title($title, $this->depth + $depth);
     }
 
     /**

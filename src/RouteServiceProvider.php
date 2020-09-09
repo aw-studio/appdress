@@ -14,8 +14,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
-        Route::get(config('docs.route_prefix'), DocsController::class.'@index')->name('docs.index');
-        Route::get(config('docs.route_prefix').'/class/{class}', DocsController::class.'@class')->name('docs.class');
-        Route::get(config('docs.route_prefix').'/{namespace}/{file}', DocsController::class.'@markdown')->name('docs.markdown');
+        Route::get(config('appdress.route_prefix'), DocsController::class.'@show')->name('appdress.welcome');
+        Route::get(config('appdress.route_prefix').'/class/{class}', DocsController::class.'@show')->name('appdress.class');
+        Route::get(config('appdress.route_prefix').'/{namespace}/{file}', DocsController::class.'@markdown')->name('appdress.markdown');
     }
 }

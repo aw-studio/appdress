@@ -24,21 +24,21 @@ class ServiceProvider extends LaravelServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'docs');
 
-        $this->app->singleton('docs.parser', \Docs\Parser\Parser::class);
-        $this->app->singleton('docs.parser.engine', function ($app) {
+        $this->app->singleton('appdress.parser', \Docs\Parser\Parser::class);
+        $this->app->singleton('appdress.parser.engine', function ($app) {
             $engine = new ParserEngine(
                 $app['files'],
-                $app['docs.parser']
+                $app['appdress.parser']
             );
 
             return $engine;
         });
-        $this->app->singleton('docs.factory', \Docs\Factory::class);
-        $this->app->singleton('docs.nav', \Docs\Navigation\Navigation::class);
-        $this->app->bind(\Docs\Contracts\Parser::class, 'docs.parser');
-        $this->app->bind(\Docs\Contracts\Engine::class, 'docs.parser.engine');
+        $this->app->singleton('appdress.factory', \Docs\Factory::class);
+        $this->app->singleton('appdress.nav', \Docs\Navigation\Navigation::class);
+        $this->app->bind(\Docs\Contracts\Parser::class, 'appdress.parser');
+        $this->app->bind(\Docs\Contracts\Engine::class, 'appdress.parser.engine');
 
-        $this->app->afterResolving('docs.factory', function ($factory) {
+        $this->app->afterResolving('appdress.factory', function ($factory) {
             $factory->bind(Model::class, ModelDoc::class);
             $factory->bind(Mailable::class, MailDoc::class);
 
@@ -72,7 +72,7 @@ class ServiceProvider extends LaravelServiceProvider
     public function registerPublishes()
     {
         $this->publishes([
-            __DIR__.'/../publish/config/docs.php' => config_path('docs.php'),
+            __DIR__.'/../publish/config/appdress.php' => config_path('appdress.php'),
         ], 'config');
 
         $this->publishes([
@@ -80,8 +80,8 @@ class ServiceProvider extends LaravelServiceProvider
         ], 'provider');
 
         $this->mergeConfigFrom(
-            __DIR__.'/../publish/config/docs.php',
-            'docs'
+            __DIR__.'/../publish/config/appdress.php',
+            'appdress'
         );
     }
 }

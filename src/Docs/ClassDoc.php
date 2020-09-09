@@ -3,6 +3,7 @@
 namespace Docs\Docs;
 
 use Docs\Contracts\Engine;
+use Docs\Support\Markdown;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
@@ -50,7 +51,7 @@ class ClassDoc extends ReflectionDoc
     public function describe()
     {
         return [
-            $this->getSummary(),
+            $this->getIntroduction(),
 
             $this->describeDependencies(
                 $this->reflectClassMethod($this->reflector, '__construct')
@@ -60,7 +61,26 @@ class ClassDoc extends ReflectionDoc
 
             $this->describeMethods(
                 $this->withoutMagic($this->getOwnPublicMethods())
-            ),
+            )->prepend($this->subTitle('Methods')),
+        ];
+    }
+
+    /**
+     * Get introduction.
+     *
+     * @return array|null
+     */
+    public function getIntroduction()
+    {
+        $summary = $this->getSummary();
+
+        if (! $summary) {
+            return;
+        }
+
+        return [
+            Markdown::title('Introduction', 2),
+            $summary,
         ];
     }
 
@@ -147,7 +167,7 @@ class ClassDoc extends ReflectionDoc
     protected function describeMethods(Collection $methods)
     {
         return $methods->map(function ($method) {
-            return $this->subDoc(MethodDoc::class, $method);
+            return $this->subDoc(MethodDoc::class, $method, 2);
         });
     }
 }

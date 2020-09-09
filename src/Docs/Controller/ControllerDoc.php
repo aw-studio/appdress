@@ -12,8 +12,9 @@ class ControllerDoc extends ClassDoc
     public function describe()
     {
         return [
-            $this->getSummary(),
+            $this->getIntroduction(),
 
+            $this->subTitle('Dependencies', 2),
             $this->describeDependencies(
                 $this->reflectClassMethod($this->reflector, '__construct')
             ),

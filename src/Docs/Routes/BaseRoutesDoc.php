@@ -45,7 +45,7 @@ abstract class BaseRoutesDoc extends BaseDoc
     public function describeRouteAction(Route $route)
     {
         if ($controller = $this->getRouteController($route)) {
-            return Markdown::link(class_basename($controller), route('docs.class', ['class' => $controller]));
+            return Markdown::link(class_basename($controller), route('appdress.class', ['class' => $controller]));
         }
 
         if (! array_key_exists('uses', $route->action)) {

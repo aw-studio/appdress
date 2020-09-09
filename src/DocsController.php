@@ -14,6 +14,7 @@ use Docs\Contracts\Markdownable;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class DocsController
 {
@@ -53,14 +54,27 @@ class DocsController
         $this->parser = $parser;
     }
 
-    public function class(Request $request, $class)
+    /**
+     * Show appdress docs.
+     *
+     * @param  Request     $request
+     * @param  string|null $class
+     * @return View
+     */
+    public function show(Request $request, $class = null)
     {
-        $doc = app('docs.factory')->make($class);
+        $doc = '';
+
+        if ($class) {
+            $doc = $this->toHtml(app('appdress.factory')->make($class));
+        }
+
+        $index = $this->parseIndex(app('appdress.nav')->getSections());
 
         return view('docdress::docs', [
-            'index'          => $this->parseIndex(app('docs.nav')->getSections()),
+            'index'          => $index,
             'title'          => $class,
-            'content'        => $this->toHtml($doc),
+            'content'        => $doc,
             'versions'       => ['master' => 'Master'],
             'currentVersion' => 'master',
             'theme'          => config('docdress.themes.default'),
@@ -69,11 +83,6 @@ class DocsController
             ],
             'repo' => 'aw-studio/bassliner.org',
         ]);
-    }
-
-    public function index(Request $request)
-    {
-        return view('docs::index');
     }
 
     /**
