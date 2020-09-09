@@ -4,6 +4,7 @@ namespace Docs\Docs\Controller\Concerns;
 
 use Docs\Support\Markdown;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationRuleParser;
 use ReflectionMethod;
 use ReflectionParameter;
@@ -48,8 +49,9 @@ trait DescribesRequest
     protected function rulesTable()
     {
         $rows = [];
+
         foreach ($this->getRules() as $attribute => $rules) {
-            foreach ($rules as $rule) {
+            foreach (Arr::wrap($rules) as $rule) {
                 $rows[] = [
                     Markdown::code($attribute),
                     Markdown::code($this->getRuleName($rule)),
