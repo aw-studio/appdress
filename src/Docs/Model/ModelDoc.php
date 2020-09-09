@@ -3,6 +3,8 @@
 namespace Docs\Docs\Model;
 
 use Docs\Docs\ClassDoc;
+use Docs\Support\Markdown;
+use ReflectionMethod;
 
 class ModelDoc extends ClassDoc
 {
@@ -26,6 +28,33 @@ class ModelDoc extends ClassDoc
             $this->describeMutators(),
             $this->describeRelations(),
             $this->describeScopes(),
+            $this->getOtherMethods(),
+        ];
+    }
+
+    public function getOtherMethods()
+    {
+        $filtered = $this->getAccessorMethods()
+            ->merge($this->getMutatorsMethods())
+            ->merge($this->getRelationsMethods())
+            ->merge($this->getScopeMethods());
+
+        $methods = $this->getOwnPublicMethods()->filter(function (ReflectionMethod $method) use ($filtered) {
+            return ! $filtered->contains($method);
+        });
+
+        $rows = $methods->map(function ($method) {
+            return [
+                Markdown::code($method->name),
+                $this->getSummary($method)->implode("\n"),
+            ];
+        })->toArray();
+
+        return [
+            $this->subTitle('Methods'),
+            Markdown::table([
+                'Methods', 'Description',
+            ], $rows),
         ];
     }
 

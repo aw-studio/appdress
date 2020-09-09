@@ -133,9 +133,24 @@ class ClassDoc extends ReflectionDoc
     {
         $reflector = $this->resolveReflector($reflector);
 
-        return $this->getMethods($reflector)->filter(function (ReflectionMethod $method) use ($reflector) {
+        $traitMethods = $this->getTraitMethods();
+
+        return $this->getMethods($reflector)->filter(function (ReflectionMethod $method) use ($reflector, $traitMethods) {
+            if (! $traitMethods->filter(fn ($trait) => $trait->name == $method->name)->isEmpty()) {
+                return false;
+            }
+
             return $method->class === $reflector->name;
         });
+    }
+
+    public function getTraitMethods(ReflectionClass $reflector = null)
+    {
+        $reflector = $this->resolveReflector($reflector);
+
+        return collect($reflector->getTraits())->map(function (ReflectionClass $trait) {
+            return $trait->getMethods();
+        })->flatten();
     }
 
     /**

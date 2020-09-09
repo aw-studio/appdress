@@ -32,7 +32,7 @@ trait DescribesDatabase
     {
         $classKey = str_replace('\\', '.', $this->class);
 
-        return Cache::remember("appdress.model.schema.{$classKey}", now()->addHour(), function () {
+        return Cache::remember("appdress.model.schema.{$classKey}", 5, function () {
             $rows = [];
 
             $columns = collect(Schema::getColumnListing($this->getTable()))->mapWithKeys(function ($column) {
