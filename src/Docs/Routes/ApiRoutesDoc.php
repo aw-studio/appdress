@@ -4,6 +4,7 @@ namespace Docs\Docs\Routes;
 
 use Docs\Contracts\Engine;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Str;
 
 class ApiRoutesDoc extends BaseRoutesDoc
 {
@@ -34,7 +35,7 @@ class ApiRoutesDoc extends BaseRoutesDoc
                 return false;
             }
 
-            return $prefix == 'api';
+            return Str::contains($prefix, 'api');
         });
     }
 }
