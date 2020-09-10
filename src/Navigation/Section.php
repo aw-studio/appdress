@@ -33,7 +33,13 @@ class Section
 
     public function describe($describe, $nested = false)
     {
-        return $this->describePath($describe, $nested);
+        $this->describePath($describe, $nested);
+        $this->children = collect($this->children)->sort(function ($a, $b) {
+            return strnatcmp(
+                class_basename($a->getClass()),
+                class_basename($b->getClass())
+            );
+        })->toArray();
     }
 
     public function describePath($descriptionPath, $nested = false)
